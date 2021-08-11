@@ -1,51 +1,82 @@
 package teamProject;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-class Dudu extends JFrame {
-	private JPanel backjp;
-	private JPanel buttonPanel = new JPanel();
-	private ImageIcon back = new ImageIcon("C://duduback.jpg");
-	private JButton start = new JButton("시작");
-	private JButton end = new JButton("종료");
-	private JButton record = new JButton("기록실");
-	
-	private GridLayout duduLayout = new GridLayout(3, 4);
-	
-	public Dudu(String title) {
-		super(title);
-		super.setSize(300, 500);
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		int xpos = (int) (screen.getWidth() / 2 - super.getWidth() / 2);
-		int ypos = (int) (screen.getHeight() / 2 - super.getHeight() / 2);
-		super.setLocation(xpos, ypos);
-		backjp = new JPanel() {
-            public void paintComponent(Graphics g) {
-            	Dimension backd = getSize();
-                g.drawImage(back.getImage(), 0, 0, backd.width, backd.height, null);
-                setOpaque(false);
-                super.paintComponent(g);
-            }
-		};
-		backjp.setLayout(new BorderLayout());
-		super.add(backjp);
-		super.setResizable(false);
-		super.setVisible(true);
-	}
-	
-	public void init() {
-		backjp.add("SOUTH", buttonPanel);
-		buttonPanel.setLayout(new GridLayout(1, 3));
-		buttonPanel.add(start);
-		buttonPanel.add(end);
-		buttonPanel.add(record);
-	}
-}
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-public class DDGFrame {
-	public static void main(String[] ar) {
-		new Dudu("두더지게임");
+public class DDGFrame extends JFrame implements ActionListener {
+	private JPanel gameMain;
+	private JButton duduGame;
+	private JButton jumpGame;
+	private JButton blockGame;
+	//private JButton gameRecord;
+	//메인화면에서 DuduRecord 그대로쓰면 이상한상황이 발생함
+
+	Dudu duduframe = new Dudu();
+
+	DDGFrame() {
+		Dimension rscreen = Toolkit.getDefaultToolkit().getScreenSize();
+		setSize(300, 500);
+		int rxpos = (int) (rscreen.getWidth() / 2 - getWidth() / 2);
+		int rypos = (int) (rscreen.getHeight() / 2 - getHeight() / 2);
+		setLocation(rxpos, rypos);
+		setTitle("게임선택화면");
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+		gameMain = new JPanel();
+		gameMain.setLayout(null);
+		add(gameMain);
+
+		duduGame = new JButton("두더지 게임");
+		jumpGame = new JButton("점프 게임");
+		blockGame = new JButton("블록부수기 게임");
+		//gameRecord = new JButton("기록실");
+
+		duduGame.setBounds(75, 50, 130, 50);
+		jumpGame.setBounds(75, 150, 130, 50);
+		blockGame.setBounds(75, 250, 130, 50);
+		//gameRecord.setBounds(75, 350, 130, 50);
+
+		duduGame.addActionListener(this);
+		jumpGame.addActionListener(this);
+		blockGame.addActionListener(this);
+		//gameRecord.addActionListener(this);
+
+		gameMain.add(duduGame);
+		gameMain.add(jumpGame);
+		gameMain.add(blockGame);
+		//gameMain.add(gameRecord);
+
+		setResizable(false);
+		setVisible(true);
+	}
+
+	public static void main(String args[]) {
+		new DDGFrame();
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource() == duduGame) {
+			if (duduframe == null) {
+				duduframe = new Dudu();
+				duduframe.setVisible(true);
+			} else {
+				duduframe.dispose();
+				duduframe = new Dudu();
+				duduframe.setVisible(true);
+			}
+		} else if (e.getSource() == jumpGame) {
+
+		} else if (e.getSource() == blockGame) {
+
+		} //else if (e.getSource() == gameRecord) {
+
+		//}
 	}
 }
