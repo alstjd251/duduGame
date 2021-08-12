@@ -31,7 +31,6 @@ public class DDGFrame extends JFrame implements ActionListener {
 		gameMain = new JPanel();
 		gameMain.setLayout(null);
 		add(gameMain);
-
 		duduGame = new JButton("두더지 게임");
 		jumpGame = new JButton("점프 게임");
 		blockGame = new JButton("블록부수기 게임");

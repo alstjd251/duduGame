@@ -24,18 +24,15 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 public class Dudu extends JFrame implements MouseListener, ActionListener {
-	private Image background = new ImageIcon("c://projectImage_png/duduback.png").getImage();
+	private Image background = new ImageIcon("C://projectImage_png/duduback.png").getImage();
 	private JPanel panel;
 	private JLabel[] holes = new JLabel[9];
 	private int[] board = new int[9];
 	private int score = 0;
 	private JLabel lblScore;
 	private JLabel lblTimeLeft;
-	private JLabel lblHighscore;
-	private Toolkit tk = Toolkit.getDefaultToolkit();
 
 	private int timeLeft = 30;
-	// private int highscore = 0;
 
 	private JButton btnStart;
 	private JButton btnEnd;
@@ -44,7 +41,14 @@ public class Dudu extends JFrame implements MouseListener, ActionListener {
 	private Timer timer;
 
 	private DuduRecord dr;
-	
+
+	static Music introMusic;
+	static Musica effect;
+
+	Toolkit tk = Toolkit.getDefaultToolkit();
+
+	private JLabel goLabel = new JLabel(new ImageIcon("C://projectImage_png/gameOver.png"));
+
 	private ImageIcon loadImage(String path) {
 		Image image = new ImageIcon(this.getClass().getResource(path)).getImage();
 		Image scaledImage = image.getScaledInstance(130, 130, java.awt.Image.SCALE_SMOOTH);
@@ -67,13 +71,9 @@ public class Dudu extends JFrame implements MouseListener, ActionListener {
 
 	private void initGUI() {
 		setTitle("두더지 게임");
-		setSize(500, 800);
-		Dimension rscreen = Toolkit.getDefaultToolkit().getScreenSize();
-		int rxpos = (int) (rscreen.getWidth() / 2 - getWidth() / 2);
-		int rypos = (int) (rscreen.getHeight() / 2 - getHeight() / 2);
-		setLocation(rxpos, rypos);
 		setResizable(false);
-		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 470, 800);
+
 		JPanel contentPane = new JPanel() {
 			public void paintComponent(Graphics g) {
 				Dimension back = getSize();
@@ -86,13 +86,20 @@ public class Dudu extends JFrame implements MouseListener, ActionListener {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
+
+		Dimension rscreen = Toolkit.getDefaultToolkit().getScreenSize();
+		int rxpos = (int) (rscreen.getWidth() / 2 - getWidth() / 2);
+		int rypos = (int) (rscreen.getHeight() / 2 - getHeight() / 2);
+		setLocation(rxpos, rypos);
+
 		JLabel lblTitle = new JLabel("두더지 잡기");
-		lblTitle.setForeground(new Color(153, 204, 0));
+		lblTitle.setForeground(new Color(0, 0, 0));
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitle.setBounds(0, 0, 500, 50);
 		contentPane.add(lblTitle);
+
 		panel = new JPanel();
-		panel.setBackground(new Color(0, 102, 0));
+		panel.setOpaque(false);
 		panel.setBounds(30, 100, 420, 520);
 		panel.setLayout(null);
 		contentPane.add(panel);
@@ -144,21 +151,15 @@ public class Dudu extends JFrame implements MouseListener, ActionListener {
 
 		lblScore = new JLabel("Score: 0");
 		lblScore.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblScore.setForeground(new Color(135, 206, 250));
+		lblScore.setForeground(new Color(0, 0, 0));
 		lblScore.setBounds(300, 20, 140, 30);
 		contentPane.add(lblScore);
 
 		lblTimeLeft = new JLabel("30");
 		lblTimeLeft.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTimeLeft.setForeground(new Color(240, 128, 128));
+		lblTimeLeft.setForeground(new Color(0, 0, 0));
 		lblTimeLeft.setBounds(230, 50, 140, 30);
 		contentPane.add(lblTimeLeft);
-
-		lblHighscore = new JLabel("Highscore: 0");
-		lblHighscore.setHorizontalAlignment(SwingConstants.TRAILING);
-		lblHighscore.setForeground(new Color(255, 255, 0));
-		lblHighscore.setBounds(310, 50, 130, 30);
-		contentPane.add(lblHighscore);
 
 		btnStart = new JButton("Start");
 		btnStart.setBackground(Color.white);
@@ -175,74 +176,7 @@ public class Dudu extends JFrame implements MouseListener, ActionListener {
 		btnRecord.setBounds(310, 650, 110, 30);
 		contentPane.add(btnRecord);
 
-		panel.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(loadImage("/hammer.png").getImage(),
-				new Point(0, 0), "custom cursor1"));
-	}
-
-	private void initEvents() {
-		for (int i = 0; i < holes.length; i++) {
-			holes[i].addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent e) {
-					JLabel lbl = (JLabel) e.getSource();
-					int id = Integer.parseInt(lbl.getName());
-					pressedButton(id);
-				}
-			});
-		}
-		btnStart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				btnStart.setEnabled(false);
-				btnRecord.setEnabled(false);
-				clearBoard();
-				genRandMole();
-				timer.start();
-			}
-		});
-		btnEnd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		btnRecord.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (dr == null) {
-					dr = new DuduRecord();
-				} else {
-					dr.dispose();
-					dr = new DuduRecord();
-				}
-			}
-		});
-		timer = new Timer(1000, new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (timeLeft == 0) {
-					lblTimeLeft.setText("" + timeLeft);
-					timer.stop();
-					btnStart.setEnabled(true);
-					btnRecord.setEnabled(true);
-				}
-				lblTimeLeft.setText("" + timeLeft);
-				timeLeft--;
-			}
-		});
-	}
-	private void pressedButton(int id) {
-		int val = board[id];
-		if (val == 1) {
-			score++;
-		} else {
-			score--;
-		}
-		lblScore.setText("Score: " + score);
-
-		clearBoard();
-		genRandMole();
-	}
-
-	public Dudu() {
-		initGUI();
-		clearBoard();
-		initEvents();
+		goLabel.setVisible(false);
 	}
 
 	public void customcursor() {
@@ -272,7 +206,8 @@ public class Dudu extends JFrame implements MouseListener, ActionListener {
 		Point point = new Point(0, 0);
 		Cursor cursor1 = tk.createCustomCursor(cursorimage1, point, "");
 		panel.setCursor(cursor1);
-
+		effect = new Musica("mp3", false);
+		effect.start();
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -280,6 +215,89 @@ public class Dudu extends JFrame implements MouseListener, ActionListener {
 		Point point = new Point(0, 0);
 		Cursor cursor1 = tk.createCustomCursor(cursorimage, point, "");
 		panel.setCursor(cursor1);
+	}
+
+	private void initEvents() {
+		for (int i = 0; i < holes.length; i++) {
+			holes[i].addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					JLabel lbl = (JLabel) e.getSource();
+					int id = Integer.parseInt(lbl.getName());
+					pressedButton(id);
+				}
+			});
+		}
+		btnStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < holes.length; i++) {
+					holes[i].setVisible(true);
+				}
+				goLabel.setVisible(false);
+				introMusic = new Music("mp3", true);
+				introMusic.start();
+				score = 0;
+				timeLeft = 30;
+				lblScore.setText("Score: 0");
+				btnStart.setEnabled(false);
+				clearBoard();
+				genRandMole();
+				timer.start();
+			}
+		});
+		btnEnd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		btnRecord.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (dr == null) {
+					dr = new DuduRecord();
+				} else {
+					dr.dispose();
+					dr = new DuduRecord();
+				}
+			}
+		});
+
+		timer = new Timer(1000, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (timeLeft == 0) {
+					lblTimeLeft.setText("" + timeLeft);
+					timer.stop();
+					introMusic.close();
+					btnStart.setEnabled(true);
+					for (int i = 0; i < holes.length; i++) {
+						holes[i].setVisible(false);
+					}
+					goLabel.setVisible(true);
+					goLabel.setBounds(0, 0, 428, 583);
+					panel.add(goLabel);
+				}
+				lblTimeLeft.setText("" + timeLeft);
+				timeLeft--;
+			}
+		});
+	}
+
+	private void pressedButton(int id) {
+		int val = board[id];
+		if (val == 1) {
+			score++;
+		} else {
+			score--;
+		}
+		lblScore.setText("Score: " + score);
+
+		clearBoard();
+		genRandMole();
+	}
+
+	public Dudu() {
+		initGUI();
+		clearBoard();
+		initEvents();
+		customcursor();
 	}
 
 	public void actionPerformed(ActionEvent e) {
